@@ -1,6 +1,4 @@
-package ru.yandex.practicum.TaskTracker;
-
-import java.util.HashMap;
+package ru.yandex.practicum.task;
 
 public class SubTask extends Task {
     private int epicId;

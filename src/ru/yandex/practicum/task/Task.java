@@ -1,6 +1,5 @@
-package ru.yandex.practicum.TaskTracker;
+package ru.yandex.practicum.task;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Task {
@@ -13,11 +12,6 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
-    }
-
-    public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
     }
 
     public String getName() {
@@ -70,14 +64,6 @@ public class Task {
 
     @Override
     public int hashCode() {
-        int hash = 17;
-        if (name != null) {
-            hash = hash + name.hashCode();
-        }
-        hash = hash * 31;
-        if (description != null) {
-            hash = hash + description.hashCode();
-        }
-        return hash;
+        return Objects.hash(name, description, status);
     }
 }
