@@ -82,7 +82,7 @@ public class TaskManager {
     }
 
     public ArrayList<SubTask> getAssignedSubTasks(int id) {
-        return epics.get(id).getAssignedSubTasks(epics.get(id));
+        return epics.get(id).getAssignedSubTasks();
     }
 
     public void deleteTaskById(int id) {
@@ -120,7 +120,7 @@ public class TaskManager {
     public void updateEpic(Epic updatedEpic) {
         int id = updatedEpic.getId();
         Epic oldEpic = epics.get(id);
-        ArrayList<SubTask> existingSubTasks = oldEpic.getAssignedSubTasks(oldEpic);
+        ArrayList<SubTask> existingSubTasks = oldEpic.getAssignedSubTasks();
 
         for (SubTask subTask : existingSubTasks) {
             updatedEpic.addSubTask(subTask);
@@ -128,8 +128,8 @@ public class TaskManager {
         epics.put(id, updatedEpic);
     }
 
-    private static void updateEpicStatus(Epic epic) {
-        ArrayList<SubTask> checkStatus = epic.getAssignedSubTasks(epic);
+    private void updateEpicStatus(Epic epic) {
+        ArrayList<SubTask> checkStatus = epic.getAssignedSubTasks();
 
         if (checkStatus.isEmpty()) {
             epic.setStatus(Status.NEW);

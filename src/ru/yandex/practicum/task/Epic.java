@@ -14,12 +14,8 @@ public class Epic extends Task {
         assignedSubTasks.add(subTask);
     }
 
-    public ArrayList<SubTask> getAssignedSubTasks(Epic epic) {
-        ArrayList<SubTask> subtasks = new ArrayList<>();
-        for (SubTask subTask : assignedSubTasks) {
-            subtasks.add(subTask);
-        }
-        return subtasks;
+    public ArrayList<SubTask> getAssignedSubTasks() {
+        return new ArrayList<>(assignedSubTasks);
     }
 
     public void updateSubTask(int index, SubTask updatedSubTask) {
