@@ -1,36 +1,45 @@
-package ru.yandex.practicum.manager;
+package manager;
 
+import ru.yandex.practicum.history.HistoryManager;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
+
+    private HistoryManager history = Managers.getDefaultHistory();
+
     private int currentId = 1;
 
+    @Override
     public ArrayList<Task> getTasksList() {
         return new ArrayList<>(tasks.values());
     }
 
+    @Override
     public ArrayList<SubTask> getSubTasksList() {
         return new ArrayList<>(subTasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getEpicsList() {
         return new ArrayList<>(epics.values());
     }
 
+    @Override
     public void clearTasks() {
         tasks.clear();
     }
 
+    @Override
     public void clearSubTasks() {
         subTasks.clear();
         for (Epic epic : epics.values()) {
@@ -39,29 +48,38 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void clearEpics() {
         epics.clear();
         subTasks.clear();
     }
 
+    @Override
     public Task getTaskById(int id) {
+        history.add(tasks.get(id));
         return tasks.get(id);
     }
 
+    @Override
     public SubTask getSubTaskById(int id) {
+        history.add(subTasks.get(id));
         return subTasks.get(id);
     }
 
+    @Override
     public Epic getEpicById(int id) {
+        history.add(epics.get(id));
         return epics.get(id);
     }
 
+    @Override
     public void createNewTask(Task task) {
         task.setId(currentId);
         tasks.put(currentId, task);
         currentId++;
     }
 
+    @Override
     public void createNewSubTask(SubTask subTask) {
         subTask.setId(currentId);
         Epic epic = epics.get(subTask.getEpicId());
@@ -70,25 +88,27 @@ public class TaskManager {
             updateEpicStatus(epics.get(subTask.getEpicId()));
             subTasks.put(currentId, subTask);
             currentId++;
-        } else {
-            return;
         }
     }
 
+    @Override
     public void createNewEpic(Epic epic) {
         epic.setId(currentId);
         epics.put(currentId, epic);
         currentId++;
     }
 
+    @Override
     public ArrayList<SubTask> getAssignedSubTasks(int id) {
         return epics.get(id).getAssignedSubTasks();
     }
 
+    @Override
     public void deleteTaskById(int id) {
         tasks.remove(id);
     }
 
+    @Override
     public void deleteSubtaskById(int id) {
         SubTask subTaskToDelete = subTasks.remove(id);
         Epic masterEpic = epics.get(subTaskToDelete.getEpicId());
@@ -96,16 +116,19 @@ public class TaskManager {
         updateEpicStatus(epics.get(subTaskToDelete.getEpicId()));
     }
 
+    @Override
     public void deleteEpicById(int id) {
         epics.remove(id);
         subTasks.keySet().removeIf(subTaskId -> subTasks.get(subTaskId).getEpicId() == id);
     }
 
+    @Override
     public void updateTask(Task updatedTask) {
         int id = updatedTask.getId();
         tasks.put(id, updatedTask);
     }
 
+    @Override
     public void updateSubTask(SubTask updatedSubTask) {
         int id = updatedSubTask.getId();
         Epic masterEpic = epics.get(updatedSubTask.getEpicId());
@@ -117,6 +140,7 @@ public class TaskManager {
         updateEpicStatus(epics.get(updatedSubTask.getEpicId()));
     }
 
+    @Override
     public void updateEpic(Epic updatedEpic) {
         int id = updatedEpic.getId();
         Epic oldEpic = epics.get(id);
@@ -126,6 +150,16 @@ public class TaskManager {
             updatedEpic.addSubTask(subTask);
         }
         epics.put(id, updatedEpic);
+    }
+
+    @Override
+    public List<Task> getHistory(){
+        return  history.getHistory();
+    }
+
+    @Override
+    public void clearHistory() {
+        history.clearHistory();
     }
 
     private void updateEpicStatus(Epic epic) {

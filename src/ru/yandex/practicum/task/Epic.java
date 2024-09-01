@@ -18,10 +18,6 @@ public class Epic extends Task {
         return new ArrayList<>(assignedSubTasks);
     }
 
-    public void updateSubTask(int index, SubTask updatedSubTask) {
-        assignedSubTasks.set(index, updatedSubTask);
-    }
-
     public void removeSubTaskFromEpic(SubTask subTask) {
             assignedSubTasks.remove(subTask);
     }
