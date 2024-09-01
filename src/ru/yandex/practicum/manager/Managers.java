@@ -1,4 +1,4 @@
-package manager;
+package ru.yandex.practicum.manager;
 
 import ru.yandex.practicum.history.HistoryManager;
 import ru.yandex.practicum.history.InMemoryHistoryManager;
