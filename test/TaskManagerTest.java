@@ -23,7 +23,7 @@ class TaskManagerTest {
     public void setUp() {
         test = Managers.getDefault();
         task = new Task("test", "test", Status.NEW);
-        epic = new Epic("epic", "test", Status.NEW);
+        epic = new Epic("epic", "test");
         subTask = new SubTask("test2", "test2", 1, Status.IN_PROGRESS);
         test.createNewEpic(epic);
         test.createNewTask(task);
@@ -55,7 +55,7 @@ class TaskManagerTest {
 
         final Task task2 = new Task("task", "test delete by id", Status.NEW);
         test.createNewTask(task2);
-        final Epic epic2 = new Epic("second epic", "test", Status.NEW);
+        final Epic epic2 = new Epic("second epic", "test");
         test.createNewEpic(epic2);
         final SubTask subTask2 = new SubTask("subtask", "belongs to epic 1", epic2.getId(), Status.DONE);
         test.createNewSubTask(subTask2);
@@ -94,7 +94,7 @@ class TaskManagerTest {
 
     @Test
     public void shouldReturnCorrectListOfAssignedSubtasks() {
-        final Epic epic2 = new Epic("second epic", "test", Status.NEW);
+        final Epic epic2 = new Epic("second epic", "test");
         test.createNewEpic(epic2);
         final SubTask subTask2 = new SubTask("subtask", "belongs to epic 1", epic.getId(), Status.NEW);
         final SubTask subTask3 = new SubTask("subtask", "belongs to epic 2", epic2.getId(), Status.NEW);
@@ -154,7 +154,7 @@ class TaskManagerTest {
     @Test
     public void shouldCorrectlyUpdateObjectInfo() {
         final Task task2 = new Task("update task", "test update", Status.IN_PROGRESS);
-        final Epic epic2 = new Epic("update epic", "test update", Status.DONE);
+        final Epic epic2 = new Epic("update epic", "test update");
         final SubTask subTask2 = new SubTask("update subtask", "update",
                 epic.getId(), Status.IN_PROGRESS);
         task2.setId(task.getId());

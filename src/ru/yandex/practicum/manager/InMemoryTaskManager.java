@@ -6,10 +6,7 @@ import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();
@@ -22,29 +19,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getTasksList() {
-        for (Task task : tasks.values()
-             ) {
+        Collection<Task> taskList = tasks.values();
+        for (Task task : taskList) {
             history.add(task);
         }
-        return new ArrayList<>(tasks.values());
+        return new ArrayList<>(taskList);
     }
 
     @Override
     public List<SubTask> getSubTasksList() {
-        for (SubTask subTask : subTasks.values()
-        ) {
+        Collection<SubTask> subTaskList = subTasks.values();
+        for (SubTask subTask : subTaskList) {
             history.add(subTask);
         }
-        return new ArrayList<>(subTasks.values());
+        return new ArrayList<>(subTaskList);
     }
 
     @Override
     public List<Epic> getEpicsList() {
-        for (Epic epic : epics.values()
-        ) {
+        Collection<Epic> epicList = epics.values();
+        for (Epic epic : epicList) {
             history.add(epic);
         }
-        return new ArrayList<>(epics.values());
+        return new ArrayList<>(epicList);
     }
 
     @Override
@@ -166,8 +163,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory(){
-        return  history.getHistory();
+    public List<Task> getHistory() {
+        return history.getHistory();
     }
 
     private void updateEpicStatus(Epic epic) {

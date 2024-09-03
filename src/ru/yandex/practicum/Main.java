@@ -14,8 +14,8 @@ public class Main {
         Task task2 = new Task("Second", "another task", Status.NEW);
         tm.createNewTask(task1);
         tm.createNewTask(task2);
-        Epic epic1 = new Epic("Epic", "2 subtasks", Status.NEW);
-        Epic epic2 = new Epic("Second epic", "1 subtask", Status.DONE);
+        Epic epic1 = new Epic("Epic", "2 subtasks");
+        Epic epic2 = new Epic("Second epic", "1 subtask");
         tm.createNewEpic(epic1);
         tm.createNewEpic(epic2);
         SubTask subTask1 = new SubTask("subtask", "belongs to epic1", epic1.getId(), Status.NEW);
