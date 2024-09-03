@@ -2,12 +2,13 @@ package ru.yandex.practicum.history;
 
 import ru.yandex.practicum.task.Task;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager{
 
-    private List<Task> history = new ArrayList<>();
+    private List<Task> history = new LinkedList<>();
+    private final static int MAX_SIZE = 10;
 
     @Override
     public void add(Task task){
@@ -21,15 +22,11 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public List<Task> getHistory(){
-        return new ArrayList<>(history);
+        return new LinkedList<>(history);
     }
 
-    @Override
-    public void clearHistory() {
-        history.clear();
-    }
     private boolean isFull() {
-        if (history.size() > 9) {
+        if (history.size() >= MAX_SIZE) {
             return true;
         } else {
             return false;

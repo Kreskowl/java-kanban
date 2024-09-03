@@ -7,17 +7,17 @@ import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TaskManagerTest {
 
-    private static TaskManager test;
-    Task task;
-    SubTask subTask;
-    Epic epic;
+    private TaskManager test;
+    private Task task;
+    private SubTask subTask;
+    private Epic epic;
+
 
     @BeforeEach
     public void setUp() {
@@ -101,8 +101,8 @@ class TaskManagerTest {
         test.createNewSubTask(subTask2);
         test.createNewSubTask(subTask3);
 
-        ArrayList<SubTask> assignedToEpic = epic.getAssignedSubTasks();
-        ArrayList<SubTask> assignedToEpic2 = epic2.getAssignedSubTasks();
+        List<SubTask> assignedToEpic = epic.getAssignedSubTasks();
+        List<SubTask> assignedToEpic2 = epic2.getAssignedSubTasks();
 
         assertTrue(assignedToEpic.size() == 2, "incorrect number of subtasks");
         assertTrue(assignedToEpic2.size() == 1, "incorrect number of subtasks");
@@ -130,28 +130,25 @@ class TaskManagerTest {
 
     @Test
     public void shouldReturnCorrectHistoryList() {
-        List<Task> history = test.getHistory();
+        List<Task> historyTest;
 
         test.getEpicById(epic.getId());
-        history = test.getHistory();
-        assertTrue(history.size() == 1, "size is not correct");
+        historyTest = test.getHistory();;
+        assertTrue(historyTest.size() == 1, "size is not correct");
 
         for (int i = 0; i < 9; i++) {
             test.getTaskById(task.getId());
         }
-        history = test.getHistory();
-        assertTrue(history.size() == 10);
-        assertEquals(history.get(0), epic);
+        historyTest = test.getHistory();
+        assertTrue(historyTest.size() == 10);
+        assertEquals(historyTest.get(0), epic);
 
         test.getSubTaskById(subTask.getId());
-        history = test.getHistory();
-        assertTrue(history.size() == 10, "maximum size is not correct");
-        assertEquals(history.get(0), task, "first element does not remove correctly");
-        assertEquals(history.get(9), subTask,"10th element does not put correctly");
+        historyTest = test.getHistory();
+        assertTrue(historyTest.size() == 10, "maximum size is not correct");
+        assertEquals(historyTest.get(0), task, "first element does not remove correctly");
+        assertEquals(historyTest.get(9), subTask,"10th element does not put correctly");
 
-        test.clearHistory();
-        history = test.getHistory();
-        assertTrue(history.isEmpty());
     }
 
     @Test
@@ -177,7 +174,5 @@ class TaskManagerTest {
         assertEquals(task2, tasks.get(0), "task is not update");
         assertEquals(subTask2, subTasks.get(0), "subtask is not update");
         assertEquals(epic2, epics.get(0), "epic is not update");
-
-
     }
 }

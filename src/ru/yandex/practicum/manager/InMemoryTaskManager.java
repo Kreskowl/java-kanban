@@ -9,28 +9,41 @@ import ru.yandex.practicum.task.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap<>();
-    private HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    private HashMap<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
 
-    private HistoryManager history = Managers.getDefaultHistory();
+    private final HistoryManager history = Managers.getDefaultHistory();
 
     private int currentId = 1;
 
     @Override
-    public ArrayList<Task> getTasksList() {
+    public List<Task> getTasksList() {
+        for (Task task : tasks.values()
+             ) {
+            history.add(task);
+        }
         return new ArrayList<>(tasks.values());
     }
 
     @Override
-    public ArrayList<SubTask> getSubTasksList() {
+    public List<SubTask> getSubTasksList() {
+        for (SubTask subTask : subTasks.values()
+        ) {
+            history.add(subTask);
+        }
         return new ArrayList<>(subTasks.values());
     }
 
     @Override
-    public ArrayList<Epic> getEpicsList() {
+    public List<Epic> getEpicsList() {
+        for (Epic epic : epics.values()
+        ) {
+            history.add(epic);
+        }
         return new ArrayList<>(epics.values());
     }
 
@@ -99,7 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getAssignedSubTasks(int id) {
+    public List<SubTask> getAssignedSubTasks(int id) {
         return epics.get(id).getAssignedSubTasks();
     }
 
@@ -144,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic updatedEpic) {
         int id = updatedEpic.getId();
         Epic oldEpic = epics.get(id);
-        ArrayList<SubTask> existingSubTasks = oldEpic.getAssignedSubTasks();
+        List<SubTask> existingSubTasks = oldEpic.getAssignedSubTasks();
 
         for (SubTask subTask : existingSubTasks) {
             updatedEpic.addSubTask(subTask);
@@ -157,13 +170,8 @@ public class InMemoryTaskManager implements TaskManager {
         return  history.getHistory();
     }
 
-    @Override
-    public void clearHistory() {
-        history.clearHistory();
-    }
-
     private void updateEpicStatus(Epic epic) {
-        ArrayList<SubTask> checkStatus = epic.getAssignedSubTasks();
+        List<SubTask> checkStatus = epic.getAssignedSubTasks();
 
         if (checkStatus.isEmpty()) {
             epic.setStatus(Status.NEW);

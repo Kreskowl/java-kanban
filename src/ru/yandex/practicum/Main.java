@@ -1,5 +1,7 @@
-package ru.yandex.practicum.manager;
+package ru.yandex.practicum;
 
+import ru.yandex.practicum.manager.Managers;
+import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
