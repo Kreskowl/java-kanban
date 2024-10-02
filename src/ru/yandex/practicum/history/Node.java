@@ -1,6 +1,6 @@
 package ru.yandex.practicum.history;
 
-public class Node <T>{
+public class Node<T> {
     T data;
     Node<T> next;
     Node<T> prev;
