@@ -4,7 +4,6 @@ import ru.yandex.practicum.task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -34,18 +33,18 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void linkLast(Task task) {
         Node<Task> node = new Node<>(tail, task, null);
-        if (tail != null){
+        if (tail != null) {
             tail.next = node;
         }
         tail = node;
 
-        if (head == null){
+        if (head == null) {
             head = node;
         }
         history.put(task.getId(), node);
     }
 
-   private List<Task> getTasks(){
+   private List<Task> getTasks() {
         List<Task> result = new ArrayList<>();
         Node<Task> actual = head;
         while (actual != null) {
