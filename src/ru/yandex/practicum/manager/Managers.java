@@ -3,13 +3,13 @@ package ru.yandex.practicum.manager;
 import ru.yandex.practicum.history.HistoryManager;
 import ru.yandex.practicum.history.InMemoryHistoryManager;
 
-public final class Managers{
+public final class Managers {
 
 
     private Managers() {
     }
 
-    public static TaskManager getDefault(){
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 
