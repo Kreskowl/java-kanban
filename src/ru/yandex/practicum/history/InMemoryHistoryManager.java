@@ -5,11 +5,26 @@ import ru.yandex.practicum.task.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private Node<Task> head;
-    private Node<Task> tail;
-    private final HashMap<Integer, Node<Task>> history = new HashMap<>();
+
+    private static class Node<T> {
+        private Task task;
+        private Node<Task> next;
+        private Node<Task> prev;
+
+        Node(Node<Task> prev, Task task, Node<Task> next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+
+    private final Map<Integer, Node<Task>> history = new HashMap<>();
+    private Node head;
+    private Node tail;
 
 
     @Override
@@ -44,12 +59,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         history.put(task.getId(), node);
     }
 
-   private List<Task> getTasks() {
+    private List<Task> getTasks() {
         List<Task> result = new ArrayList<>();
-        Node<Task> actual = head;
-        while (actual != null) {
-            result.add(actual.data);
-            actual = actual.next;
+        Node<Task> current = head;
+        while (current != null) {
+            result.add(current.task);
+            current = current.next;
         }
         return result;
     }

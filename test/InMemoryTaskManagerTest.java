@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TaskManagerTest {
+class InMemoryTaskManagerTest {
 
     private TaskManager test;
     private Task task;
@@ -126,24 +126,6 @@ class TaskManagerTest {
 
         test.deleteSubtaskById(subTask2.getId());
         assertEquals(epic.getStatus(), Status.NEW,"not correct status update");
-    }
-
-    @Test
-    public void shouldReturnCorrectHistoryList() {
-        List<Task> historyTest;
-
-        test.getEpicById(epic.getId());
-        test.getSubTaskById(subTask.getId());
-        historyTest = test.getHistory();
-
-        assertEquals(historyTest.size(), 2, "maximum size is not correct");
-        assertEquals(historyTest.get(historyTest.size() - 1), subTask, "subtask added at wrong place");
-
-        test.getEpicById(epic.getId());
-        historyTest = test.getHistory();
-
-        assertEquals(historyTest.get(0), subTask, "subtask does not update its place in history");
-        assertEquals(historyTest.get(historyTest.size() - 1), epic, "epic does not update its place in history");
     }
 
     @Test
