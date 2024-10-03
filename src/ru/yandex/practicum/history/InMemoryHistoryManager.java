@@ -11,11 +11,11 @@ import java.util.Map;
 public class InMemoryHistoryManager implements HistoryManager {
 
     private static class Node<T> {
-        private Task task;
-        private Node<Task> next;
-        private Node<Task> prev;
+        private final T task;
+        private Node<T> next;
+        private Node<T> prev;
 
-        Node(Node<Task> prev, Task task, Node<Task> next) {
+        Node(Node<T> prev, T task, Node<T> next) {
             this.task = task;
             this.next = next;
             this.prev = prev;
@@ -23,8 +23,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private final Map<Integer, Node<Task>> history = new HashMap<>();
-    private Node head;
-    private Node tail;
+    private Node<Task> head;
+    private Node<Task> tail;
 
 
     @Override
