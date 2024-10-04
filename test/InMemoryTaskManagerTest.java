@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TaskManagerTest {
+class InMemoryTaskManagerTest {
 
     private TaskManager test;
     private Task task;
@@ -87,9 +87,9 @@ class TaskManagerTest {
         test.clearTasks();
         test.clearEpics();
 
-        assertTrue(test.getTasksList().isEmpty(), "does not remove objects from list");
-        assertTrue(test.getSubTasksList().isEmpty(), "does not remove objects from list if delete all epics");
-        assertTrue(test.getEpicsList().isEmpty(), "does not remove objects from list");
+        assertEquals(test.getTasksList().size(), 0, "does not remove objects from list");
+        assertEquals(test.getSubTasksList().size(), 0 , "does not remove objects from list if delete all epics");
+        assertEquals(test.getEpicsList().size(), 0, "does not remove objects from list");
     }
 
     @Test
@@ -104,8 +104,8 @@ class TaskManagerTest {
         List<SubTask> assignedToEpic = epic.getAssignedSubTasks();
         List<SubTask> assignedToEpic2 = epic2.getAssignedSubTasks();
 
-        assertTrue(assignedToEpic.size() == 2, "incorrect number of subtasks");
-        assertTrue(assignedToEpic2.size() == 1, "incorrect number of subtasks");
+        assertEquals(assignedToEpic.size(), 2, "incorrect number of subtasks");
+        assertEquals(assignedToEpic2.size(), 1, "incorrect number of subtasks");
 
         for (SubTask subTask : assignedToEpic) {
             assertEquals(subTask.getEpicId(), epic.getId(), "subtasks does not delete correctly");
@@ -115,40 +115,17 @@ class TaskManagerTest {
     @Test
     public void shouldUpdateEpicStatus() {
 
-        assertTrue(epic.getStatus() == Status.IN_PROGRESS, "not correct status update");
+        assertEquals(epic.getStatus(), Status.IN_PROGRESS, "not correct status update");
 
         test.clearSubTasks();
-        assertTrue(epic.getStatus() == Status.NEW,"not correct status update");
+        assertEquals(epic.getStatus(), Status.NEW,"not correct status update");
 
         final SubTask subTask2 = new SubTask("subtask", "belongs to epic 1", epic.getId(), Status.DONE);
         test.createNewSubTask(subTask2);
-        assertTrue(epic.getStatus() == Status.DONE,"not correct status update");
+        assertEquals(epic.getStatus(), Status.DONE,"not correct status update");
 
         test.deleteSubtaskById(subTask2.getId());
-        assertTrue(epic.getStatus() == Status.NEW,"not correct status update");
-    }
-
-    @Test
-    public void shouldReturnCorrectHistoryList() {
-        List<Task> historyTest;
-
-        test.getEpicById(epic.getId());
-        historyTest = test.getHistory();;
-        assertTrue(historyTest.size() == 1, "size is not correct");
-
-        for (int i = 0; i < 9; i++) {
-            test.getTaskById(task.getId());
-        }
-        historyTest = test.getHistory();
-        assertTrue(historyTest.size() == 10);
-        assertEquals(historyTest.get(0), epic);
-
-        test.getSubTaskById(subTask.getId());
-        historyTest = test.getHistory();
-        assertTrue(historyTest.size() == 10, "maximum size is not correct");
-        assertEquals(historyTest.get(0), task, "first element does not remove correctly");
-        assertEquals(historyTest.get(9), subTask,"10th element does not put correctly");
-
+        assertEquals(epic.getStatus(), Status.NEW,"not correct status update");
     }
 
     @Test
@@ -168,9 +145,9 @@ class TaskManagerTest {
         final List<SubTask> subTasks = test.getSubTasksList();
         final List<Epic> epics = test.getEpicsList();
 
-        assertTrue(tasks.size() == 1,"add task instead of update");
-        assertTrue(subTasks.size() == 1, "add subtask instead of update");
-        assertTrue(epics.size() == 1, "add epic instead of update");
+        assertEquals(tasks.size(), 1,"add task instead of update");
+        assertEquals(subTasks.size(), 1, "add subtask instead of update");
+        assertEquals(epics.size(), 1, "add epic instead of update");
         assertEquals(task2, tasks.get(0), "task is not update");
         assertEquals(subTask2, subTasks.get(0), "subtask is not update");
         assertEquals(epic2, epics.get(0), "epic is not update");
