@@ -40,7 +40,6 @@ public class Main {
         tm.getTaskById(2);
         tm.deleteEpicById(3);
         System.out.println(tm.getHistory());
-
-
     }
 }
+
