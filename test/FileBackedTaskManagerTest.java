@@ -30,7 +30,7 @@ public class FileBackedTaskManagerTest {
         test = new FileBackedTaskManager(tempFile);
         task = new Task("test", "test", Status.NEW);
         epic = new Epic("epic", "test");
-        subTask = new SubTask("test2", "test2", epic.getId(), Status.IN_PROGRESS);
+
     }
 
     @Test
@@ -66,6 +66,7 @@ public class FileBackedTaskManagerTest {
     public void shouldAddInOrderCreatedObjectsInSaveFile() {
         test.createNewEpic(epic);
         test.createNewTask(task);
+        subTask = new SubTask("test2", "test2", epic.getId(), Status.IN_PROGRESS);
         test.createNewSubTask(subTask);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(tempFile))) {
@@ -89,6 +90,7 @@ public class FileBackedTaskManagerTest {
     public void shouldLoadInfoFromSaveFile() {
         test.createNewEpic(epic);
         test.createNewTask(task);
+        subTask = new SubTask("test2", "test2", epic.getId(), Status.IN_PROGRESS);
         test.createNewSubTask(subTask);
         FileBackedTaskManager result = FileBackedTaskManager.loadFromFile(tempFile);
 

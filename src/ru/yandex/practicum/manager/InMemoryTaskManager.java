@@ -20,6 +20,22 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int currentId = 1;
 
+    public Map<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    public Map<Integer, SubTask> getSubTasks() {
+        return subTasks;
+    }
+
+    public Map<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    public void setCurrentId(int currentId) {
+        this.currentId = currentId;
+    }
+
     @Override
     public List<Task> getTasksList() {
         return new ArrayList<>(tasks.values());
