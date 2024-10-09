@@ -6,7 +6,10 @@ import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Task> tasks = new HashMap<>();

@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
@@ -32,6 +33,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Should add objects in right list")
     public void shouldAddObjectsInRightList() {
         assertEquals(task, test.getTaskById(task.getId()),"does not add task to list");
         assertEquals(subTask, test.getSubTaskById(subTask.getId()), "does not add subtask to list");
@@ -39,6 +41,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Same class objects with same id should be equal")
     public void sameClassObjectsWithSameIdShouldBeEqual() {
 
         final Task savedTask = test.getTaskById(task.getId());
@@ -51,7 +54,8 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldReturnActualListOfObjects() {
+    @DisplayName("Should return actual list of objects after deleting")
+    public void shouldReturnActualListOfObjectsAfterDeleting() {
 
         final Task task2 = new Task("task", "test delete by id", Status.NEW);
         test.createNewTask(task2);
@@ -93,6 +97,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Should return correct list of assigned subtasks")
     public void shouldReturnCorrectListOfAssignedSubtasks() {
         final Epic epic2 = new Epic("second epic", "test");
         test.createNewEpic(epic2);
@@ -113,6 +118,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Should update epic status")
     public void shouldUpdateEpicStatus() {
 
         assertEquals(epic.getStatus(), Status.IN_PROGRESS, "not correct status update");
@@ -129,6 +135,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Should correctly update object info")
     public void shouldCorrectlyUpdateObjectInfo() {
         final Task task2 = new Task("update task", "test update", Status.IN_PROGRESS);
         final Epic epic2 = new Epic("update epic", "test update");
