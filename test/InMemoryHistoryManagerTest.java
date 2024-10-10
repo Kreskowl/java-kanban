@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
@@ -30,6 +31,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    @DisplayName("Should add task in history")
     public void shouldAddTaskInHistory() {
         List<Task> historyTest = test.getHistory();
 
@@ -41,6 +43,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    @DisplayName("Should add task at the end of history")
     public void shouldAddTaskInTheEndOfHistory() {
         List<Task> historyTest;
 
@@ -53,6 +56,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    @DisplayName("Should delete object from the history")
     public void shouldDeleteObjectFromTheHistory() {
         List<Task> historyTest;
 
@@ -67,6 +71,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    @DisplayName("Should update object place in the history and delete its copy after get method")
     public void shouldUpdateObjectPlaceInTheHistoryAndDeleteItsCopyAfterGetMethod() {
         List<Task> historyTest;
 
@@ -82,6 +87,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
+    @DisplayName("Should delete assigned subtasks after removing epic from history")
     public void shouldDeleteAssignedSubtasksAfterRemovingEpicFromHistory() {
         List<Task> historyTest;
 

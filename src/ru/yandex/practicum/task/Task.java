@@ -7,11 +7,13 @@ public class Task {
     private String description;
     private int id;
     private Status status;
+    protected TasksTypes type;
 
     public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = TasksTypes.TASK;
     }
 
     public String getName() {
@@ -34,11 +36,17 @@ public class Task {
         this.id = id;
     }
 
+    public TasksTypes getType() {
+        return type;
+    }
+
+    public void setType(TasksTypes type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
-        return "name = '" + name + '\'' +
-                ", description = '" + description + '\'' +
-                ", status = '" + status.toString() + '\'';
+        return id + "," + type + "," + name + "," + status + "," + description;
     }
 
     @Override
