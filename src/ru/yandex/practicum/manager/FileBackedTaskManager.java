@@ -194,10 +194,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void initialize(File file) {
         try {
-            if (file.getParentFile().mkdirs()){
+            if (file.getParentFile().mkdirs()) {
                 System.out.println("Directory is created");
             }
-            if (file.createNewFile()){
+            if (file.createNewFile()) {
                 System.out.println("File is created");
             }
         } catch (IOException fileIsNotCreate) {
