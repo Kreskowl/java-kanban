@@ -1,4 +1,4 @@
-package ru.yandex.practicum.Util;
+package ru.yandex.practicum.util;
 
 import ru.yandex.practicum.history.HistoryManager;
 import ru.yandex.practicum.history.InMemoryHistoryManager;
@@ -32,8 +32,8 @@ public final class Managers {
             } else {
                 return FileBackedTaskManager.loadFromFile(defaultSaveFilePath);
             }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Can`t load the file " + defaultSaveFilePath.getPath());
+        } catch (IOException fileNotFound) {
+            throw new ManagerSaveException("Can`t load the file " + defaultSaveFilePath.getAbsolutePath());
         }
     }
 }

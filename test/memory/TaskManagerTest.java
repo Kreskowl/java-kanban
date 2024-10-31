@@ -17,7 +17,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TreeSet;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected T manager;
@@ -32,7 +37,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void setUp() {
         try {
             tempFile = Files.createTempFile("Save", ".tmp").toFile();
-        } catch (IOException e) {
+        } catch (IOException fileIsNotCreated) {
             System.out.println("Can`t create file " + tempFile.getAbsolutePath());
         }
         manager = createManager();

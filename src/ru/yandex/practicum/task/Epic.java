@@ -1,12 +1,11 @@
 package ru.yandex.practicum.task;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
     private final List<SubTask> assignedSubTasks = new ArrayList<>();
-    private LocalDateTime endTime;
+//    private LocalDateTime endTime;
 
     public Epic(String name, String description, int id) {
         super(name, description, id);

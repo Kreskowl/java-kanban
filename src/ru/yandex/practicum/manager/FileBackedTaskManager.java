@@ -1,11 +1,20 @@
 package ru.yandex.practicum.manager;
 
-import ru.yandex.practicum.Util.DateAndTimeFormatUtil;
-import ru.yandex.practicum.Util.Managers;
 import ru.yandex.practicum.history.HistoryManager;
-import ru.yandex.practicum.task.*;
+import ru.yandex.practicum.task.Epic;
+import ru.yandex.practicum.task.Status;
+import ru.yandex.practicum.task.SubTask;
+import ru.yandex.practicum.task.Task;
+import ru.yandex.practicum.task.TasksTypes;
+import ru.yandex.practicum.util.DateAndTimeFormatUtil;
+import ru.yandex.practicum.util.Managers;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -113,8 +122,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             for (Task task : getSubTasksList()) {
                 writer.write(toString(task) + "\n");
             }
-        } catch (IOException e) {
-            throw new ManagerSaveException("Error saving data in file: " + file.getPath());
+        } catch (IOException fileNotFound) {
+            throw new ManagerSaveException("Error saving data in file: " + file.getAbsolutePath());
         }
     }
 
@@ -144,7 +153,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             manager.getEpics().values().forEach(manager::updateEpicStatus);
             manager.setCurrentId(actualId + 1);
-        } catch (IOException e) {
+        } catch (IOException fileNotFound) {
             throw new ManagerSaveException("Error loading from file: " + file.getAbsolutePath());
         } finally {
             manager.isLoading = false;
@@ -185,10 +194,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void initialize(File file) {
         try {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        } catch (IOException e) {
-            throw new ManagerSaveException("Error creating file: " + e.getMessage());
+            if (file.getParentFile().mkdirs()){
+                System.out.println("Directory is created");
+            }
+            if (file.createNewFile()){
+                System.out.println("File is created");
+            }
+        } catch (IOException fileIsNotCreate) {
+            throw new ManagerSaveException("Error creating file: " + fileIsNotCreate.getMessage());
         }
     }
 }

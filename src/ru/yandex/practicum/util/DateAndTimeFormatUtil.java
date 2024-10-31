@@ -1,4 +1,4 @@
-package ru.yandex.practicum.Util;
+package ru.yandex.practicum.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -43,12 +43,10 @@ public final class DateAndTimeFormatUtil {
 
         String[] parts = durationString.split(" ");
         for (int i = 0; i < parts.length; i++) {
-            if (parts[i].equals("days")) {
-                days = Long.parseLong(parts[i - 1]);
-            } else if (parts[i].equals("hours")) {
-                hours = Long.parseLong(parts[i - 1]);
-            } else if (parts[i].equals("minutes")) {
-                minutes = Long.parseLong(parts[i - 1]);
+            switch (parts[i]) {
+                case "days" -> days = Long.parseLong(parts[i - 1]);
+                case "hours" -> hours = Long.parseLong(parts[i - 1]);
+                case "minutes" -> minutes = Long.parseLong(parts[i - 1]);
             }
         }
 

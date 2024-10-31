@@ -3,7 +3,7 @@ package history;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.Util.Managers;
+import ru.yandex.practicum.util.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;

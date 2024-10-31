@@ -2,8 +2,8 @@ package memory;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.Util.DateAndTimeFormatUtil;
-import ru.yandex.practicum.Util.Managers;
+import ru.yandex.practicum.util.DateAndTimeFormatUtil;
+import ru.yandex.practicum.util.Managers;
 import ru.yandex.practicum.manager.FileBackedTaskManager;
 import ru.yandex.practicum.manager.ManagerSaveException;
 import ru.yandex.practicum.task.Status;
@@ -41,7 +41,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         try {
             long fileSize = Files.size(tempFile.toPath());
             assertEquals(0, fileSize, "File is not empty");
-        } catch (IOException e) {
+        } catch (IOException fileNotFound) {
             throw new ManagerSaveException("File does not exist" + tempFile.getPath());
         }
     }
@@ -55,7 +55,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
             String expected = "id, type, name, status, description, epicId, start time, duration";
             String actual = reader.readLine();
             assertEquals(expected, actual, "first line is not a header");
-        } catch (IOException e) {
+        } catch (IOException fileNotFound) {
             throw new ManagerSaveException("Can`t read the file " + tempFile.getPath());
         }
     }
@@ -80,7 +80,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
             String savedSubTask = reader.readLine();
             assertEquals(toString(subTask), savedSubTask, "does not save subtask in right place");
-        } catch (IOException e) {
+        } catch (IOException fileNotFound) {
             throw new ManagerSaveException("Can`t read the file " + tempFile.getPath());
         }
     }
