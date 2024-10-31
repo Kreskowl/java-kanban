@@ -5,6 +5,8 @@ import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
 
 public interface TaskManager {
     List<Task> getTasksList();
@@ -19,11 +21,11 @@ public interface TaskManager {
 
     void clearEpics();
 
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
-    SubTask getSubTaskById(int id);
+    Optional<SubTask> getSubTaskById(int id);
 
-    Epic getEpicById(int id);
+    Optional<Epic> getEpicById(int id);
 
     void createNewTask(Task task);
 
@@ -47,6 +49,7 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
+    TreeSet<Task> getPrioritizedTasks();
 }
 
 

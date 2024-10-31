@@ -1,1 +1,4 @@
-
+id, type, name, status, description, epicId, start time, duration
+2,Epic,epic,New,2 subtasks,null,30.10.2024 16:57,5 hours
+1,Task,task 1,In progress,test,null,30.10.2024 16:57,8 hours 20 minutes
+3,Subtask,subtask,New,epic 1,2,30.10.2024 16:57,5 hours
