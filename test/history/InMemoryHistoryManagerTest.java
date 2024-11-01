@@ -1,13 +1,16 @@
+package history;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.manager.Managers;
+import ru.yandex.practicum.util.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,13 +24,31 @@ public class InMemoryHistoryManagerTest {
     @BeforeEach
     public void setUp() {
         test = Managers.getDefault();
-        task = new Task("test", "test", Status.NEW);
+        task = new Task("test", "test", Status.NEW,
+                LocalDateTime.of(2024, 10, 29, 14, 48), 30);
         epic = new Epic("epic", "test");
-        subTask = new SubTask("test2", "test2", 1, Status.IN_PROGRESS);
         test.createNewEpic(epic);
+        subTask = new SubTask("test2", "test2", Status.IN_PROGRESS,  epic.getId(),
+                LocalDateTime.of(2024, 10, 29, 16, 0),30);
         test.createNewTask(task);
         test.createNewSubTask(subTask);
 
+    }
+
+    @Test
+    @DisplayName("Should return empty history initially")
+    public void shouldReturnEmptyHistoryInitially() {
+        List<Task> historyTest = test.getHistory();
+        assertEquals(0, historyTest.size(), "History should be empty initially");
+    }
+
+    @Test
+    @DisplayName("Should not add duplicate entries in history")
+    public void shouldNotAddDuplicateEntriesInHistory() {
+        test.getTaskById(task.getId());
+        test.getTaskById(task.getId());
+        List<Task> historyTest = test.getHistory();
+        assertEquals(1, historyTest.size(), "Duplicate entries were added to history");
     }
 
     @Test
