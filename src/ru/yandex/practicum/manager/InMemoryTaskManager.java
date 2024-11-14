@@ -19,14 +19,14 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
+    private static final int INTERVAL_MINUTES = 15;
+    private static final int PLANNING_PERIOD_YEARS = 1;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Set<Task> prioritizedTasks = new TreeSet<>();
     private final HistoryManager history;
     private final Map<LocalDateTime, Boolean> schedule = new HashMap<>();
-    private static final int INTERVAL_MINUTES = 15;
-    private static final int PLANNING_PERIOD_YEARS = 1;
     private int currentId = 1;
 
     public InMemoryTaskManager(HistoryManager history) {
@@ -94,18 +94,27 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Optional<Task> getTaskById(int id) {
+        if (tasks.get(id) == null) {
+            throw new NotFoundException("Task with id " + id + " not found");
+        }
         history.add(tasks.get(id));
         return Optional.ofNullable(tasks.get(id));
     }
 
     @Override
     public Optional<SubTask> getSubTaskById(int id) {
+        if (subTasks.get(id) == null) {
+            throw new NotFoundException("Subtask with id " + id + " not found");
+        }
         history.add(subTasks.get(id));
         return Optional.ofNullable(subTasks.get(id));
     }
 
     @Override
     public Optional<Epic> getEpicById(int id) {
+        if (epics.get(id) == null) {
+            throw new NotFoundException("Epic with id " + id + " not found");
+        }
         history.add(epics.get(id));
         return Optional.ofNullable(epics.get(id));
     }
@@ -148,6 +157,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<SubTask> getAssignedSubTasks(int id) {
+        if (epics.get(id) == null) {
+            throw new NotFoundException("Epic with id " + id + " not found");
+        }
         return epics.get(id).getAssignedSubTasks();
     }
 

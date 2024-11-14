@@ -31,6 +31,64 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), file);
+        manager.isLoading = true;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            reader.readLine();
+            String line;
+            int actualId = 0;
+            while ((line = reader.readLine()) != null) {
+                Task task = taskFromString(line);
+
+                switch (task.getType()) {
+                    case EPIC -> manager.getEpics().put(task.getId(), (Epic) task);
+                    case SUBTASK -> {
+                        SubTask subTask = (SubTask) task;
+                        manager.getSubTasks().put(task.getId(), (SubTask) task);
+                        manager.getEpics().get(subTask.getEpicId()).addSubTask(subTask);
+                    }
+                    default -> manager.getTasks().put(task.getId(), task);
+                }
+
+                if (task.getId() > actualId) {
+                    actualId = task.getId();
+                }
+            }
+            manager.getEpics().values().forEach(manager::updateEpicStatus);
+            manager.setCurrentId(actualId + 1);
+        } catch (IOException fileNotFound) {
+            throw new ManagerSaveException("Error loading from file: " + file.getAbsolutePath());
+        } finally {
+            manager.isLoading = false;
+        }
+        return manager;
+    }
+
+    private static Task taskFromString(String value) {
+        String[] info = value.split(",");
+        int id = Integer.parseInt(info[0]);
+        TasksTypes type = TasksTypes.valueOf(info[1].toUpperCase());
+        String name = info[2];
+        Status status = Status.valueOf(info[3].toUpperCase().replace(" ", "_"));
+        String description = info[4];
+        LocalDateTime startTime = DateAndTimeFormatUtil.parseDateTime(info[6]);
+        Duration duration = DateAndTimeFormatUtil.parseFormattedDuration(info[7]);
+
+        switch (type) {
+            case EPIC -> {
+                return new Epic(name, description, id);
+            }
+            case SUBTASK -> {
+                int epicId = Integer.parseInt(info[5]);
+                return new SubTask(name, description, id, status, epicId, startTime, duration.toMinutes());
+            }
+            default -> {
+                return new Task(name, description, id, status, startTime, duration.toMinutes());
+            }
+        }
+    }
+
     @Override
     public void createNewTask(Task task) {
         super.createNewTask(task);
@@ -127,69 +185,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager manager = new FileBackedTaskManager(Managers.getDefaultHistory(), file);
-        manager.isLoading = true;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            reader.readLine();
-            String line;
-            int actualId = 0;
-            while ((line = reader.readLine()) != null) {
-                Task task = taskFromString(line);
-
-                switch (task.getType()) {
-                    case EPIC -> manager.getEpics().put(task.getId(), (Epic) task);
-                    case SUBTASK -> {
-                        SubTask subTask = (SubTask) task;
-                        manager.getSubTasks().put(task.getId(), (SubTask) task);
-                        manager.getEpics().get(subTask.getEpicId()).addSubTask(subTask);
-                    }
-                    default -> manager.getTasks().put(task.getId(), task);
-                }
-
-                if (task.getId() > actualId) {
-                    actualId = task.getId();
-                }
-            }
-            manager.getEpics().values().forEach(manager::updateEpicStatus);
-            manager.setCurrentId(actualId + 1);
-        } catch (IOException fileNotFound) {
-            throw new ManagerSaveException("Error loading from file: " + file.getAbsolutePath());
-        } finally {
-            manager.isLoading = false;
-        }
-        return manager;
-    }
-
     private String toString(Task task) {
         return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + ","
                 + task.getDescription() + "," + task.getEpicId() + ","
                 + DateAndTimeFormatUtil.formatDateTime(task.getStartTime()) + ","
                 + DateAndTimeFormatUtil.formatDurationTime(task.getDuration());
-    }
-
-    private static Task taskFromString(String value) {
-        String[] info = value.split(",");
-        int id = Integer.parseInt(info[0]);
-        TasksTypes type = TasksTypes.valueOf(info[1].toUpperCase());
-        String name = info[2];
-        Status status = Status.valueOf(info[3].toUpperCase().replace(" ", "_"));
-        String description = info[4];
-        LocalDateTime startTime = DateAndTimeFormatUtil.parseDateTime(info[6]);
-        Duration duration = DateAndTimeFormatUtil.parseFormattedDuration(info[7]);
-
-        switch (type) {
-            case EPIC -> {
-                return new Epic(name, description, id);
-            }
-            case SUBTASK -> {
-                int epicId = Integer.parseInt(info[5]);
-                return new SubTask(name, description, id, status, epicId, startTime, duration.toMinutes());
-            }
-            default -> {
-                return new Task(name, description, id, status, startTime, duration.toMinutes());
-            }
-        }
     }
 
     private void initialize(File file) {
