@@ -22,8 +22,8 @@ public class TypeFieldAdapter extends TypeAdapter<Task> {
         out.name("description").value(task.getDescription());
         out.name("id").value(task.getId());
         out.name("status").value(task.getStatus().name());
-        out.name("type").value(task.getType().name());  // Используемое для бизнес-логики
-        out.name("taskClassType").value(task.getClass().getSimpleName().toUpperCase()); // Добавляем маркерное поле
+        out.name("type").value(task.getType().name());
+        out.name("taskClassType").value(task.getClass().getSimpleName().toUpperCase());
 
         if (task.getDuration() != null) {
             out.name("duration").value(task.getDuration().toMinutes());
@@ -69,7 +69,7 @@ public class TypeFieldAdapter extends TypeAdapter<Task> {
                     status = Status.valueOf(in.nextString());
                     break;
                 case "type":
-                    type = TasksTypes.valueOf(in.nextString()); // Используется для бизнес-логики
+                    type = TasksTypes.valueOf(in.nextString());
                     break;
                 case "duration":
                     duration = Duration.ofMinutes(in.nextLong());

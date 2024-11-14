@@ -14,7 +14,7 @@ public class DurationAdapter extends TypeAdapter<Duration> {
         if (value == null) {
             out.nullValue();
         } else {
-            out.value(value.toMinutes());  // записываем Duration как минуты
+            out.value(value.toMinutes());
         }
     }
 
@@ -24,7 +24,7 @@ public class DurationAdapter extends TypeAdapter<Duration> {
             in.nextNull();
             return null;
         }
-        return Duration.ofMinutes(in.nextLong());  // читаем минуты и создаём Duration
+        return Duration.ofMinutes(in.nextLong());
     }
 }
 
