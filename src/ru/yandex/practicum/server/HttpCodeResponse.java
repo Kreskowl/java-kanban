@@ -16,8 +16,8 @@ public enum HttpCodeResponse {
     OVERLAPS(406),
     INTERNAL_SERVER_ERROR(500);
 
-    private final int code;
     private static final Logger logger = Logger.getLogger(HttpCodeResponse.class.getName());
+    private final int code;
 
     HttpCodeResponse(int code) {
         this.code = code;

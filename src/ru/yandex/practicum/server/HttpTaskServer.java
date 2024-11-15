@@ -14,10 +14,10 @@ import java.util.logging.Logger;
 public class HttpTaskServer {
     private static final int PORT = 8080;
     private static final int BACKLOG = 0;
+    private static final Logger logger = Logger.getLogger(HttpTaskServer.class.getName());
     private final HttpServer server;
     private final TaskManager taskManager;
     private final Gson gson;
-    private static final Logger logger = Logger.getLogger(HttpTaskServer.class.getName());
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
@@ -31,7 +31,7 @@ public class HttpTaskServer {
             HttpTaskServer server = new HttpTaskServer(Managers.getDefault());
             server.start();
         } catch (IOException serverCreateError) {
-           logger.log(Level.SEVERE, "Fail to create server on port " + PORT, serverCreateError);
+            logger.log(Level.SEVERE, "Fail to create server on port " + PORT, serverCreateError);
         }
     }
 

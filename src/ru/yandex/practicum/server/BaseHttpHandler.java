@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpHandler;
 import ru.yandex.practicum.adapters.GsonProvider;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Optional;
 
 public class BaseHttpHandler implements HttpHandler {
