@@ -94,29 +94,36 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Optional<Task> getTaskById(int id) {
-        if (tasks.get(id) == null) {
-            throw new NotFoundException("Task with id " + id + " not found");
+        Task task = tasks.get(id);
+        if (task != null) {
+            history.add(task);
+            return Optional.of(task);
+        } else {
+            return Optional.empty();
         }
-        history.add(tasks.get(id));
-        return Optional.ofNullable(tasks.get(id));
     }
 
     @Override
     public Optional<SubTask> getSubTaskById(int id) {
-        if (subTasks.get(id) == null) {
-            throw new NotFoundException("Subtask with id " + id + " not found");
+        SubTask subTask = subTasks.get(id);
+
+        if (subTask != null) {
+            history.add(subTasks.get(id));
+            return Optional.ofNullable(subTask);
+        } else {
+            return Optional.empty();
         }
-        history.add(subTasks.get(id));
-        return Optional.ofNullable(subTasks.get(id));
     }
 
     @Override
     public Optional<Epic> getEpicById(int id) {
-        if (epics.get(id) == null) {
-            throw new NotFoundException("Epic with id " + id + " not found");
+        Epic epic = epics.get(id);
+        if (epic != null) {
+            history.add(epics.get(id));
+            return Optional.ofNullable(epics.get(id));
+        } else {
+            return Optional.empty();
         }
-        history.add(epics.get(id));
-        return Optional.ofNullable(epics.get(id));
     }
 
     @Override
@@ -157,9 +164,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<SubTask> getAssignedSubTasks(int id) {
-        if (epics.get(id) == null) {
-            throw new NotFoundException("Epic with id " + id + " not found");
-        }
         return epics.get(id).getAssignedSubTasks();
     }
 

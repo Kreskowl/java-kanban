@@ -19,12 +19,12 @@ public class PrioritizedHandler extends BaseHttpHandler {
         if ("GET".equals(method)) {
             handleGet(exchange);
         } else {
-            sendResponse(exchange, 405, "Method Not Allowed");
+            HttpCodeResponse.NOT_ALLOWED.sendResponse(exchange, "Method Not Allowed");
         }
     }
 
     private void handleGet(HttpExchange exchange) throws IOException {
-        sendResponse(exchange, 200, gson.toJson(taskManager.getPrioritizedTasks()));
+        HttpCodeResponse.OK.sendResponse(exchange, gson.toJson(taskManager.getPrioritizedTasks()));
     }
 }
 

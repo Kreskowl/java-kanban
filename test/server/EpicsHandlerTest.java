@@ -3,6 +3,7 @@ package server;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.server.HttpCodeResponse;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
@@ -16,6 +17,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -24,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class EpicsHandlerTest extends HttpTaskServerTestBase {
     private Epic epic;
+    private static final Logger logger = Logger.getLogger(EpicsHandlerTest.class.getName());
 
     public EpicsHandlerTest() throws IOException {
         super();
@@ -48,10 +52,10 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.getMessage();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
         assertEquals(1, manager.getEpicsList().size(), "Epic is not added in list");
         assertEquals(epic, manager.getEpicsList().get(0), "Epic in list is not equal with posted");
     }
@@ -76,10 +80,10 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(url)
@@ -90,8 +94,9 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         HttpResponse<String> getResponse = null;
         try {
             getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (IOException | InterruptedException serverResponseError) {
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
+
         }
 
         Task updatedEpic = gson.fromJson(getResponse.body(), Epic.class);
@@ -118,10 +123,11 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
+
         }
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
 
         Type listOfEpicType = new TypeToken<List<Epic>>() {
         }.getType();
@@ -149,10 +155,11 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
+
         }
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
 
         Task requestedEpic = gson.fromJson(response.body(), Epic.class);
         assertEquals(epic, requestedEpic, "Get wrong epic");
@@ -176,10 +183,11 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
+
         }
 
-        assertEquals(204, response.statusCode());
+        assertEquals(HttpCodeResponse.DELETED.getCode(), response.statusCode());
         assertTrue(manager.getEpicsList().isEmpty(), "Epic is not deleted");
     }
 
@@ -199,10 +207,10 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            fail("Request failed: " + serverResponseError.getMessage());
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(404, response.statusCode(), "Expected 404 when epic is not found");
+        assertEquals(HttpCodeResponse.NOT_FOUND.getCode(), response.statusCode(), "Expected 404 when epic is not found");
         assertEquals(response.body(), "Epic with id " + notExistId + " not found",
                 "Expected specific error message when epic is not found");
     }
@@ -234,17 +242,19 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
 
         Type listOfSubtaskType = new TypeToken<List<SubTask>>() {
         }.getType();
         List<Epic> serverAssignedSubtasks = gson.fromJson(response.body(), listOfSubtaskType);
 
-        assertEquals(manager.getAssignedSubTasks(epic.getId()).size(), serverAssignedSubtasks.size(), "Should be 2 subtasks in the list");
-        assertIterableEquals(manager.getAssignedSubTasks(epic.getId()), serverAssignedSubtasks, "Lists are not equal");
+        assertEquals(manager.getAssignedSubTasks(epic.getId()).size(), serverAssignedSubtasks.size(),
+                "Should be 2 subtasks in the list");
+        assertIterableEquals(manager.getAssignedSubTasks(epic.getId()), serverAssignedSubtasks,
+                "Lists are not equal");
     }
 
     @DisplayName("Should return correct response code with GET request when path ends with /subtasks if epic not exist")
@@ -263,10 +273,11 @@ public class EpicsHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            fail("Request failed: " + serverResponseError.getMessage());
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(404, response.statusCode(), "Expected 404 when epic is not found");
+        assertEquals(HttpCodeResponse.NOT_FOUND.getCode(), response.statusCode(),
+                "Expected 404 when epic is not found");
         assertEquals(response.body(), "Epic with id " + notExistId + " not found",
                 "Expected specific error message when epic is not found");
     }

@@ -1,19 +1,24 @@
 package server;
 
+import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.server.HttpCodeResponse;
 import ru.yandex.practicum.task.Epic;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,6 +27,7 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
 
     private SubTask subTask;
     private final LocalDateTime fixedTime = LocalDateTime.of(2024, 10, 9, 10, 0);
+    private static final Logger logger = Logger.getLogger(SubtasksHandlerTest.class.getName());
 
     public SubtasksHandlerTest() throws IOException {
         super();
@@ -50,9 +56,9 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.getMessage();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
 
         assertEquals(1, manager.getSubTasksList().size(), "Subtask not add in list");
         assertEquals(subTask, manager.getSubTasksList().get(0), "Added subtask not equals with posted");
@@ -82,10 +88,11 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
+
         }
 
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(url)
@@ -96,8 +103,8 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         HttpResponse<String> getResponse = null;
         try {
             getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (IOException | InterruptedException serverResponseError) {
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
         Task updatedSubTask = gson.fromJson(getResponse.body(), SubTask.class);
@@ -113,7 +120,6 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         SubTask subTask = new SubTask("Subtask 1", "Description 1",
                 Status.NEW, epic.getId(), fixedTime, 10);
         manager.createNewSubTask(subTask);
-        List<SubTask> subTasks = manager.getSubTasksList();
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/subtasks");
@@ -127,12 +133,16 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode());
-        assertEquals(1, manager.getSubTasksList().size(), "Subtask not add in list");
-        assertEquals(subTasks, manager.getSubTasksList(), "Lists not the same");
+        Type listOfSubtaskType = new TypeToken<List<SubTask>>() {
+        }.getType();
+        List<SubTask> serverSubtasks = gson.fromJson(response.body(), listOfSubtaskType);
+
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
+        assertEquals(serverSubtasks.size(), manager.getSubTasksList().size(), "Subtask not add in list");
+        assertEquals(manager.getSubTasksList(), serverSubtasks, "Lists not the same");
     }
 
     @DisplayName("Should return subtask with GET request with id")
@@ -157,10 +167,10 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
 
         Task requestedTask = gson.fromJson(response.body(), SubTask.class);
         assertEquals(subTask, requestedTask, "Subtask in list is not equal with requested");
@@ -188,10 +198,10 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(204, response.statusCode());
+        assertEquals(HttpCodeResponse.DELETED.getCode(), response.statusCode());
         assertTrue(manager.getSubTasksList().isEmpty(), "Subtask in not deleted");
     }
 
@@ -210,10 +220,10 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.getMessage();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(404, response.statusCode(), "Expected 404 when subtask is not found");
+        assertEquals(HttpCodeResponse.NOT_FOUND.getCode(), response.statusCode(), "Expected 404 when subtask is not found");
         assertEquals(response.body(), "Subtask with id " + notExistId + " not found",
                 "Expected specific error message when subtask is not found");
     }
@@ -244,9 +254,9 @@ public class SubtasksHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.getMessage();
-        }
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);          }
 
-        assertEquals(406, response.statusCode(), "Expected 406 if subtask overlaps with an existing subtask");
+        assertEquals(HttpCodeResponse.OVERLAPS.getCode(), response.statusCode(),
+                "Expected 406 if subtask overlaps with an existing subtask");
     }
 }

@@ -21,14 +21,14 @@ public class HistoryHandler extends BaseHttpHandler {
         if ("GET".equals(method)) {
             handleGet(exchange);
         } else {
-            sendResponse(exchange, 405, "Method Not Allowed");
+            HttpCodeResponse.NOT_ALLOWED.sendResponse(exchange, "Method Not Allowed");
         }
     }
 
     private void handleGet(HttpExchange exchange) throws IOException {
         String jsonResponse = gson.toJson(taskManager.getHistory());
         System.out.println("Serialized history list response: " + jsonResponse);
-        sendResponse(exchange, 200, gson.toJson(taskManager.getHistory()));
+        HttpCodeResponse.OK.sendResponse(exchange, gson.toJson(taskManager.getHistory()));
     }
 }
 

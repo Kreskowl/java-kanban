@@ -1,17 +1,23 @@
 package server;
 
+import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.server.HttpCodeResponse;
 import ru.yandex.practicum.task.Status;
+import ru.yandex.practicum.task.SubTask;
 import ru.yandex.practicum.task.Task;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,6 +28,7 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
 
     private Task task;
     private final LocalDateTime fixedTime = LocalDateTime.of(2024, 10, 9, 10, 0);
+    private static final Logger logger = Logger.getLogger(TasksHandlerTest.class.getName());
 
     public TasksHandlerTest() throws IOException, InterruptedException {
         super();
@@ -46,9 +53,9 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.getMessage();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
 
         assertEquals(1, manager.getTasksList().size(), "Task is not added in list");
         assertEquals(task, manager.getTasksList().get(0), "Task in list is not equal with posted");
@@ -74,10 +81,10 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(201, response.statusCode());
+        assertEquals(HttpCodeResponse.CREATED.getCode(), response.statusCode());
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(url)
@@ -88,8 +95,8 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         HttpResponse<String> getResponse = null;
         try {
             getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (IOException | InterruptedException serverResponseError) {
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
         Task updatedTask = gson.fromJson(getResponse.body(), Task.class);
@@ -115,12 +122,16 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode());
-        assertEquals(1, manager.getTasksList().size(), "Size of the list is not correct");
-        assertEquals(tasks, manager.getTasksList(), "List not matched");
+        Type listOfTaskType = new TypeToken<List<Task>>() {
+        }.getType();
+        List<Task> serverTasks = gson.fromJson(response.body(), listOfTaskType);
+
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
+        assertEquals(manager.getTasksList().size(), serverTasks.size(), "Size of the list is not correct");
+        assertEquals(manager.getTasksList(), serverTasks, "List not matched");
     }
 
     @DisplayName("Should return task with GET request with id")
@@ -142,10 +153,10 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode());
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode());
 
         Task requestedTask = gson.fromJson(response.body(), Task.class);
         assertEquals(task, requestedTask, "Get wrong task");
@@ -169,10 +180,10 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(204, response.statusCode());
+        assertEquals(HttpCodeResponse.DELETED.getCode(), response.statusCode());
         assertTrue(manager.getTasksList().isEmpty(), "Task is not deleted");
     }
 
@@ -192,10 +203,10 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            fail("Request failed: " + serverResponseError.getMessage());
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(404, response.statusCode(), "Expected 404 when task is not found");
+        assertEquals(HttpCodeResponse.NOT_FOUND.getCode(), response.statusCode(), "Expected 404 when task is not found");
         assertEquals(response.body(), "Task with id " + notExistId + " not found",
                 "Expected specific error message when task is not found");
     }
@@ -223,10 +234,10 @@ public class TasksHandlerTest extends HttpTaskServerTestBase {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(406, response.statusCode(), "Expected 406 when task time overlaps with an existing task");
+        assertEquals(HttpCodeResponse.OVERLAPS.getCode(), response.statusCode(), "Expected 406 when task time overlaps with an existing task");
     }
 }
 

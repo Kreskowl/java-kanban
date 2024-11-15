@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Comparable<Task> {
+    private final String description;
     protected TasksTypes type;
     private String name;
-    private final String description;
     private int id;
     private Status status;
     private Duration duration;

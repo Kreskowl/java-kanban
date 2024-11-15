@@ -8,6 +8,8 @@ import ru.yandex.practicum.util.Managers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -15,6 +17,7 @@ public class HttpTaskServer {
     private final HttpServer server;
     private final TaskManager taskManager;
     private final Gson gson;
+    private static final Logger logger = Logger.getLogger(HttpTaskServer.class.getName());
 
     public HttpTaskServer(TaskManager taskManager) throws IOException {
         this.taskManager = taskManager;
@@ -28,8 +31,7 @@ public class HttpTaskServer {
             HttpTaskServer server = new HttpTaskServer(Managers.getDefault());
             server.start();
         } catch (IOException serverCreateError) {
-            System.err.println("Failed to start server: " + serverCreateError.getMessage());
-            serverCreateError.printStackTrace();
+           logger.log(Level.SEVERE, "Fail to create server on port " + PORT, serverCreateError);
         }
     }
 

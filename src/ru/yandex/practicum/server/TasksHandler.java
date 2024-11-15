@@ -26,10 +26,10 @@ public class TasksHandler extends BaseHttpHandler {
                 case "GET" -> handleGet(exchange);
                 case "POST" -> handlePost(exchange);
                 case "DELETE" -> handleDelete(exchange);
-                default -> sendResponse(exchange, 405, "Method Not Allowed");
+                default -> HttpCodeResponse.NOT_ALLOWED.sendResponse(exchange, "Method Not Allowed");
             }
         } catch (NotFoundException notFound) {
-            sendResponse(exchange, 404, notFound.getMessage());
+            HttpCodeResponse.NOT_FOUND.sendResponse(exchange, notFound.getMessage());
         }
     }
 
@@ -37,10 +37,11 @@ public class TasksHandler extends BaseHttpHandler {
         Optional<Integer> idOpt = extractIdFromPath(exchange);
         exchange.getResponseHeaders().add("Content-Type", "application/json; charset=UTF-8");
         if (idOpt.isPresent()) {
-            Optional<Task> task = taskManager.getTaskById(idOpt.get());
-            sendResponse(exchange, 200, gson.toJson(task.get()));
+            Task task = taskManager.getTaskById(idOpt.get())
+                    .orElseThrow(() -> new NotFoundException("Task with id " + idOpt.get() + " not found"));
+            HttpCodeResponse.OK.sendResponse(exchange, gson.toJson(task));
         } else {
-            sendResponse(exchange, 200, gson.toJson(taskManager.getTasksList()));
+            HttpCodeResponse.OK.sendResponse(exchange, gson.toJson(taskManager.getTasksList()));
         }
     }
 
@@ -50,13 +51,13 @@ public class TasksHandler extends BaseHttpHandler {
         Optional<Integer> idOpt = extractIdFromPath(exchange);
         if (idOpt.isPresent()) {
             taskManager.updateTask(task);
-            sendResponse(exchange, 201, "Task updated successfully");
+            HttpCodeResponse.CREATED.sendResponse(exchange, "Task updated successfully");
         } else {
             try {
                 taskManager.createNewTask(task);
-                sendResponse(exchange, 201, "Task created successfully");
+                HttpCodeResponse.CREATED.sendResponse(exchange, "Task created successfully");
             } catch (IllegalArgumentException timeOverlap) {
-                sendResponse(exchange, 406, "Task time overlaps with an existing task or subtask");
+                HttpCodeResponse.OVERLAPS.sendResponse(exchange, "Task time overlaps with an existing task or subtask");
             }
         }
     }
@@ -65,10 +66,10 @@ public class TasksHandler extends BaseHttpHandler {
         Optional<Integer> idOpt = extractIdFromPath(exchange);
         if (idOpt.isPresent()) {
             taskManager.deleteTaskById(idOpt.get());
-            sendResponse(exchange, 204, "Task deleted");
+            HttpCodeResponse.DELETED.sendResponse(exchange, "Task deleted");
         } else {
             taskManager.clearTasks();
-            sendResponse(exchange, 204, "All tasks deleted");
+            HttpCodeResponse.DELETED.sendResponse(exchange, "All tasks deleted");
         }
     }
 }

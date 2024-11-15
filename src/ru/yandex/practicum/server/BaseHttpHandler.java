@@ -20,17 +20,6 @@ public class BaseHttpHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
     }
 
-    protected void sendResponse(HttpExchange exchange, int statusCode, String responseText) throws IOException {
-        System.out.println("Sending response with status: " + statusCode);
-        if (statusCode == 204) {
-            exchange.sendResponseHeaders(statusCode, -1);
-        }
-        exchange.sendResponseHeaders(statusCode, responseText.getBytes().length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(responseText.getBytes());
-        }
-    }
-
     protected boolean hasIdInPath(HttpExchange exchange) {
         String path = exchange.getRequestURI().getPath();
         return path.matches(".+/\\d+$");

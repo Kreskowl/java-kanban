@@ -3,6 +3,7 @@ package server;
 import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.server.HttpCodeResponse;
 import ru.yandex.practicum.task.Status;
 import ru.yandex.practicum.task.Task;
 
@@ -15,6 +16,8 @@ import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,6 +26,7 @@ public class PrioritizedHandlerTest extends HttpTaskServerTestBase{
     private Task lastByTime;
     private final LocalDateTime firstTime = LocalDateTime.of(2024, 10, 12,8,8,0);
     private final LocalDateTime lastTime = LocalDateTime.of(2024, 11, 14,10,10,0);
+    private static final Logger logger = Logger.getLogger(PrioritizedHandlerTest.class.getName());
 
     public PrioritizedHandlerTest() throws IOException {
         super();
@@ -48,10 +52,10 @@ public class PrioritizedHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(200, response.statusCode(), "response code should be 200");
+        assertEquals(HttpCodeResponse.OK.getCode(), response.statusCode(), "response code should be 200");
 
         Type setOfPrioritizedType = new TypeToken<LinkedHashSet<Task>>() {}.getType();
         LinkedHashSet<Task> serverPrioritized = gson.fromJson(response.body(), setOfPrioritizedType);
@@ -82,10 +86,10 @@ public class PrioritizedHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(405, response.statusCode(), "response code should be 405");
+        assertEquals(HttpCodeResponse.NOT_ALLOWED.getCode(), response.statusCode(), "response code should be 405");
 
         HttpRequest getRequest = HttpRequest.newBuilder()
                 .uri(url)
@@ -96,9 +100,9 @@ public class PrioritizedHandlerTest extends HttpTaskServerTestBase{
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException serverResponseError) {
-            serverResponseError.printStackTrace();
+            logger.log(Level.SEVERE, "Failed to send response", serverResponseError);
         }
 
-        assertEquals(405, response.statusCode(), "response code should be 405");
+        assertEquals(HttpCodeResponse.NOT_ALLOWED.getCode(), response.statusCode(), "response code should be 405");
     }
 }
