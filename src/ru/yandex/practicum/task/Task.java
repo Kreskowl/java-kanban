@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task implements Comparable<Task> {
-    private final String name;
     private final String description;
+    protected TasksTypes type;
+    private String name;
     private int id;
     private Status status;
-    protected TasksTypes type;
     private Duration duration;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -53,8 +53,16 @@ public class Task implements Comparable<Task> {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Status getStatus() {
@@ -65,10 +73,6 @@ public class Task implements Comparable<Task> {
         this.status = status;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public TasksTypes getType() {
         return type;
     }
@@ -77,28 +81,28 @@ public class Task implements Comparable<Task> {
         return description;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
     public Duration getDuration() {
         return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     public LocalDateTime getStartTime() {
         return startTime;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     private LocalDateTime calculateEndTime(LocalDateTime startTime, Duration duration) {

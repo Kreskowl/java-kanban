@@ -10,22 +10,9 @@ import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static class Node<T> {
-        private final T task;
-        private Node<T> next;
-        private Node<T> prev;
-
-        Node(Node<T> prev, T task, Node<T> next) {
-            this.task = task;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-
     private final Map<Integer, Node<Task>> history = new HashMap<>();
     private Node<Task> head;
     private Node<Task> tail;
-
 
     @Override
     public void add(Task task) {
@@ -79,6 +66,18 @@ public class InMemoryHistoryManager implements HistoryManager {
             tail = node.prev;
         } else {
             node.next.prev = node.prev;
+        }
+    }
+
+    private static class Node<T> {
+        private final T task;
+        private Node<T> next;
+        private Node<T> prev;
+
+        Node(Node<T> prev, T task, Node<T> next) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
         }
     }
 }

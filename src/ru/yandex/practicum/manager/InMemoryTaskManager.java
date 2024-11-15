@@ -19,14 +19,14 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
+    private static final int INTERVAL_MINUTES = 15;
+    private static final int PLANNING_PERIOD_YEARS = 1;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Set<Task> prioritizedTasks = new TreeSet<>();
     private final HistoryManager history;
     private final Map<LocalDateTime, Boolean> schedule = new HashMap<>();
-    private static final int INTERVAL_MINUTES = 15;
-    private static final int PLANNING_PERIOD_YEARS = 1;
     private int currentId = 1;
 
     public InMemoryTaskManager(HistoryManager history) {
@@ -94,20 +94,36 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Optional<Task> getTaskById(int id) {
-        history.add(tasks.get(id));
-        return Optional.ofNullable(tasks.get(id));
+        Task task = tasks.get(id);
+        if (task != null) {
+            history.add(task);
+            return Optional.of(task);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<SubTask> getSubTaskById(int id) {
-        history.add(subTasks.get(id));
-        return Optional.ofNullable(subTasks.get(id));
+        SubTask subTask = subTasks.get(id);
+
+        if (subTask != null) {
+            history.add(subTasks.get(id));
+            return Optional.ofNullable(subTask);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<Epic> getEpicById(int id) {
-        history.add(epics.get(id));
-        return Optional.ofNullable(epics.get(id));
+        Epic epic = epics.get(id);
+        if (epic != null) {
+            history.add(epics.get(id));
+            return Optional.ofNullable(epics.get(id));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
